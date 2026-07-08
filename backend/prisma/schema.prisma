@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String               @id @default(cuid())
+  name                String
+  email               String               @unique
+  password            String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  compensationRecords CompensationRecord[]
+
+  @@map("users")
+}
+
+model Company {
+  id                  String               @id @default(cuid())
+  name                String
+  normalizedName      String               @unique
+  website             String?
+  logo                String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  compensationRecords CompensationRecord[]
+
+  @@index([normalizedName])
+  @@map("companies")
+}
+
+model Role {
+  id                  String               @id @default(cuid())
+  title               String               @unique
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  compensationRecords CompensationRecord[]
+
+  @@map("roles")
+}
+
+model Level {
+  id                  String               @id @default(cuid())
+  name                String               @unique
+  rank                Int
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  compensationRecords CompensationRecord[]
+
+  @@index([rank])
+  @@map("levels")
+}
+
+model CompensationRecord {
+  id                String   @id @default(cuid())
+  userId            String
+  companyId         String
+  roleId            String
+  levelId           String
+  location          String
+  yearsOfExperience Float
+  baseSalary        Float
+  bonus             Float    @default(0)
+  stock             Float    @default(0)
+  totalCompensation Float
+  currency          Currency @default(INR)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  company           Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  level             Level    @relation(fields: [levelId], references: [id], onDelete: Cascade)
+  role              Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, companyId, roleId, levelId, location, yearsOfExperience])
+  @@index([companyId])
+  @@index([roleId])
+  @@index([levelId])
+  @@index([location])
+  @@index([yearsOfExperience])
+  @@index([totalCompensation])
+  @@map("compensation_records")
+}
+
+enum Currency {
+  INR
+  USD
+  EUR
+  GBP
+}
