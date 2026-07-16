@@ -42,3 +42,9 @@ coverage/
 
 # TypeScript
 *.tsbuildinfo
+
+# Stray compiled files in src (from accidental tsc runs)
+src/*.js
+src/*.js.map
+src/*.d.ts
+src/*.d.ts.map

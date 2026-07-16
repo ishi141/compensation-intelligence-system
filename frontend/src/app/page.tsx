@@ -10,6 +10,7 @@ export default function Home() {
   return (
     <main className="bg-charcoal min-h-screen text-ivory selection:bg-sand selection:text-charcoal">
       
+
       {/* --- ANIMATION WRAPPER START --- */}
       <motion.div 
         initial={{ opacity: 0, y: 30 }}

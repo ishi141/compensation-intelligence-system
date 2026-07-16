@@ -1,7 +1,9 @@
 // components/ComparisonDossier.tsx
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useAuth } from "../context/AuthContext";
+import { searchCompensation } from "../lib/api";
 
 type Profile = {
   id: string;
@@ -12,71 +14,88 @@ type Profile = {
   base: number;
   stock: number;
   bonus: number;
+  currency: string;
 };
-
-const PROFILES: Profile[] = [
-  {
-    id: "apple-ict4",
-    company: "Apple",
-    level: "ICT4",
-    role: "Software Engineer",
-    location: "Cupertino, CA",
-    base: 172000,
-    stock: 85000,
-    bonus: 15000,
-  },
-  {
-    id: "msft-63",
-    company: "Microsoft",
-    level: "63",
-    role: "Software Engineer II",
-    location: "Redmond, WA",
-    base: 155000,
-    stock: 75000,
-    bonus: 12000,
-  },
-  {
-    id: "google-l4",
-    company: "Google",
-    level: "L4",
-    role: "Software Engineer III",
-    location: "Mountain View, CA",
-    base: 178000,
-    stock: 95000,
-    bonus: 27000,
-  },
-  {
-    id: "meta-e4",
-    company: "Meta",
-    level: "E4",
-    role: "Software Engineer",
-    location: "Menlo Park, CA",
-    base: 185000,
-    stock: 120000,
-    bonus: 20000,
-  },
-];
 
 function totalComp(p: Profile) {
   return p.base + p.stock + p.bonus;
 }
 
-function formatUSD(n: number) {
-  return `$${n.toLocaleString("en-US")}`;
+function formatMoney(n: number, currency: string) {
+  if (n === 0) return "—";
+
+  if (currency === "INR") {
+    const abs = Math.abs(n);
+    if (abs >= 10000000) {
+      return `₹${(n / 10000000).toFixed(2).replace(/\.?0+$/, "")}Cr`;
+    }
+    if (abs >= 100000) {
+      return `₹${(n / 100000).toFixed(2).replace(/\.?0+$/, "")}L`;
+    }
+    if (abs >= 1000) {
+      return `₹${(n / 1000).toFixed(1).replace(/\.?0+$/, "")}K`;
+    }
+    return `₹${n}`;
+  }
+
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currency || "USD",
+      notation: "compact",
+      maximumFractionDigits: 1,
+    }).format(n);
+  } catch {
+    return `${currency} ${(n / 1000).toFixed(0)}k`;
+  }
 }
 
 export default function ComparisonDossier() {
-  const [selectedIds, setSelectedIds] = useState<string[]>([
-    "apple-ict4",
-    "msft-63",
-  ]);
+  const { token, isLoggedIn } = useAuth();
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !token) {
+      setLoading(false);
+      return;
+    }
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const res = await searchCompensation(token);
+        const mapped: Profile[] = res.data.records.map((r: any) => ({
+          id: r.id,
+          company: r.company.name,
+          level: r.level.name,
+          role: r.role.title,
+          location: r.location,
+          base: r.baseSalary,
+          stock: r.stock,
+          bonus: r.bonus,
+          currency: r.currency || "USD",
+        }));
+        setProfiles(mapped);
+        setSelectedIds(mapped.slice(0, 2).map((p) => p.id));
+        setError(null);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load compensation data.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [token, isLoggedIn]);
 
   const selected = useMemo(
     () =>
       selectedIds
-        .map((id) => PROFILES.find((p) => p.id === id))
+        .map((id) => profiles.find((p) => p.id === id))
         .filter(Boolean) as Profile[],
-    [selectedIds]
+    [selectedIds, profiles]
   );
 
   const maxTotal = Math.max(...selected.map(totalComp), 1);
@@ -91,7 +110,7 @@ export default function ComparisonDossier() {
 
   function addSlot() {
     if (selectedIds.length >= 3) return;
-    const unused = PROFILES.find((p) => !selectedIds.includes(p.id));
+    const unused = profiles.find((p) => !selectedIds.includes(p.id));
     if (unused) setSelectedIds((prev) => [...prev, unused.id]);
   }
 
@@ -116,7 +135,7 @@ export default function ComparisonDossier() {
           <span className="font-sans text-[10px] uppercase tracking-widest2 text-ivory/40">
             File No. 0{selected.length} / Rev. 2026
           </span>
-          {selected.length < 3 && (
+          {selected.length < 3 && selected.length < profiles.length && (
             <button
               onClick={addSlot}
               className="border border-sand px-4 py-2 font-sans text-[10px] uppercase tracking-widest2 text-sand hover:bg-sand hover:text-charcoal transition-colors duration-300"
@@ -127,41 +146,62 @@ export default function ComparisonDossier() {
         </div>
       </div>
 
-      {/* Comparison grid */}
-      <div
-        className={[
-          "grid grid-cols-1 border-l border-line",
-          selected.length === 2 ? "md:grid-cols-2" : "md:grid-cols-3",
-        ].join(" ")}
-      >
-        {selected.map((profile, index) => (
-          <DossierColumn
-            key={profile.id + index}
-            profile={profile}
-            maxTotal={maxTotal}
-            onChange={(id) => updateSlot(index, id)}
-            onRemove={
-              selected.length > 2 ? () => removeSlot(index) : undefined
-            }
-          />
-        ))}
-      </div>
+      {!isLoggedIn ? (
+        <p className="font-sans text-sm text-ivory/50 uppercase tracking-widest2 py-10">
+          Log in to view compensation comparisons.
+        </p>
+      ) : loading ? (
+        <p className="font-sans text-sm text-ivory/50 uppercase tracking-widest2 py-10">
+          Loading...
+        </p>
+      ) : error ? (
+        <p className="font-sans text-sm text-sand uppercase tracking-widest2 py-10">{error}</p>
+      ) : profiles.length < 2 ? (
+        <p className="font-sans text-sm text-ivory/50 uppercase tracking-widest2 py-10">
+          Need at least 2 records to compare.
+        </p>
+      ) : (
+        <>
+          {/* Comparison grid */}
+          <div
+            className={[
+              "grid grid-cols-1 border-l border-line",
+              selected.length === 2 ? "md:grid-cols-2" : "md:grid-cols-3",
+            ].join(" ")}
+          >
+            {selected.map((profile, index) => (
+              <DossierColumn
+                key={profile.id + index}
+                profile={profile}
+                profiles={profiles}
+                maxTotal={maxTotal}
+                onChange={(id) => updateSlot(index, id)}
+                onRemove={
+                  selected.length > 2 ? () => removeSlot(index) : undefined
+                }
+              />
+            ))}
+          </div>
 
-      <p className="mt-8 font-sans text-[10px] uppercase tracking-widest2 text-ivory/30">
-        Figures represent estimated annualized total compensation. Stock
-        valued at grant.
-      </p>
+          <p className="mt-8 font-sans text-[10px] uppercase tracking-widest2 text-ivory/30">
+            Figures represent estimated annualized total compensation. Stock
+            valued at grant.
+          </p>
+        </>
+      )}
     </section>
   );
 }
 
 function DossierColumn({
   profile,
+  profiles,
   maxTotal,
   onChange,
   onRemove,
 }: {
   profile: Profile;
+  profiles: Profile[];
   maxTotal: number;
   onChange: (id: string) => void;
   onRemove?: () => void;
@@ -192,7 +232,7 @@ function DossierColumn({
           onChange={(e) => onChange(e.target.value)}
           className="bg-transparent border-b border-line focus:border-sand outline-none pb-2 mb-4 font-display text-2xl text-ivory appearance-none cursor-pointer w-full"
         >
-          {PROFILES.map((p) => (
+          {profiles.map((p) => (
             <option key={p.id} value={p.id} className="bg-charcoal text-base">
               {p.company} — {p.level}
             </option>
@@ -213,7 +253,7 @@ function DossierColumn({
                 {seg.label}
               </span>
               <span className="font-sans text-sm text-ivory/80 tabular-nums">
-                {formatUSD(seg.value)}
+                {formatMoney(seg.value, profile.currency)}
               </span>
             </div>
             <div className="h-px w-full bg-line relative overflow-hidden">
@@ -258,7 +298,7 @@ function DossierColumn({
           Total Compensation
         </span>
         <span className="font-display text-3xl font-bold text-sand">
-          {formatUSD(total)}
+          {formatMoney(total, profile.currency)}
         </span>
       </div>
     </div>
