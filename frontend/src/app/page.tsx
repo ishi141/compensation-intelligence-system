@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -31,7 +31,7 @@ export default function Home() {
           <div className="relative min-h-screen pt-24 grid grid-cols-1 lg:grid-cols-12">
             <div className="lg:col-span-8 flexflex-col justify-center px-6 md:px-12 py-16 lg:py-0">
               <span className="font-sans text-[11px] uppercase tracking-widest2 text-sand mb-6">
-                2026 Edition â€” Market Benchmarking
+                2026 Edition - Market Benchmarking
               </span>
 
               <div className="w-10 h-px bg-ivory/30 mb-8" />
@@ -107,7 +107,7 @@ export default function Home() {
           {/* footer strip of the hero â€” thin data rail, editorial convention */}
           <div className="relative hidden md:flex border-t border-line px-12 py-5 items-center justify-between">
             <span className="font-sans text-[10px] uppercase tracking-widest2 text-ivory/40">
-              Base â€” Equity â€” Bonus â€” Benchmarked Quarterly
+              Base - Equity - Bonus - Benchmarked Quarterly
             </span>
             <span className="font-sans text-[10px] uppercase tracking-widest2 text-ivory/40">
               Scroll
@@ -119,7 +119,7 @@ export default function Home() {
         <section className="px-6 md:px-12 py-16 md:py-24 border-t border-line">
           <div className="mb-12">
             <span className="font-sans text-[11px] uppercase tracking-widest2 text-sand mb-4 block">
-              02 â€” Database
+              02 - Database
             </span>
             <h2 className="font-display text-4xl md:text-5xl text-ivory mb-2">Market Intelligence</h2>
             <p className="font-sans text-sm text-ivory/60 max-w-xl">
@@ -134,7 +134,7 @@ export default function Home() {
         <section className="px-6 md:px-12 py-16 md:py-24 border-t border-line bg-surface/30">
           <div className="mb-12">
             <span className="font-sans text-[11px] uppercase tracking-widest2 text-sand mb-4 block">
-              03 â€” Analysis
+              03 - Analysis
             </span>
             <h2 className="font-display text-4xl md:text-5xl text-ivory mb-2">Level Comparison Dossier</h2>
             <p className="font-sans text-sm text-ivory/60 max-w-xl">
@@ -148,7 +148,7 @@ export default function Home() {
         <section className="px-6 md:px-12 py-16 md:py-24 border-t border-line">
           <div className="mb-12">
             <span className="font-sans text-[11px] uppercase tracking-widest2 text-sand mb-4 block">
-              04 â€” Benchmarking
+              04 - Benchmarking
             </span>
             <h2 className="font-display text-4xl md:text-5xl text-ivory mb-2">Company Averages</h2>
             <p className="font-sans text-sm text-ivory/60 max-w-xl">
