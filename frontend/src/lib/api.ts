@@ -27,3 +27,11 @@ export async function searchCompensation(token: string) {
   if (!res.ok) throw new Error('Search failed');
   return res.json();
 }
+export async function compareCompanies(token: string, companyA: string, companyB: string) {
+  const res = await fetch(
+    `${BASE_URL}/api/v1/compare?companyA=${encodeURIComponent(companyA)}&companyB=${encodeURIComponent(companyB)}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (!res.ok) throw new Error('Comparison failed');
+  return res.json(); // returns { success, message, data: { companyA: {...}, companyB: {...} } }
+}

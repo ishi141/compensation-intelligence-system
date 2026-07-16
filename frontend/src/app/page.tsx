@@ -5,6 +5,7 @@ import Link from "next/link";
 import CompensationChart from "../components/CompensationChart";
 import DataTable from "../components/DataTable";
 import ComparisonView from "../components/ComparisonView";
+import CompanyCompare from "../components/CompanyCompare";
 
 export default function Home() {
   return (
@@ -19,7 +20,7 @@ export default function Home() {
       >
         
         <section className="relative overflow-hidden">
-          {/* oversized ghost numeral — quiet editorial texture, single instance */}
+          {/* oversized ghost numeral â€” quiet editorial texture, single instance */}
           <span
             aria-hidden
             className="pointer-events-none select-none absolute -left-6 md:left-0 bottom-0 font-display text-[28vw] md:text-[22vw] leading-none text-ivory/3 translate-y-[8%]"
@@ -28,9 +29,9 @@ export default function Home() {
           </span>
 
           <div className="relative min-h-screen pt-24 grid grid-cols-1 lg:grid-cols-12">
-            <div className="lg:col-span-8 flex flex-col justify-center px-6 md:px-12 py-16 lg:py-0">
+            <div className="lg:col-span-8 flexflex-col justify-center px-6 md:px-12 py-16 lg:py-0">
               <span className="font-sans text-[11px] uppercase tracking-widest2 text-sand mb-6">
-                2026 Edition — Market Benchmarking
+                2026 Edition â€” Market Benchmarking
               </span>
 
               <div className="w-10 h-px bg-ivory/30 mb-8" />
@@ -47,7 +48,7 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Right — overlapping surface block */}
+            {/* Right â€” overlapping surface block */}
             <div className="lg:col-span-4 relative">
               <div
                 className="
@@ -60,16 +61,16 @@ export default function Home() {
                 "
               >
                 <div>
-                  <span className="font-sans text-[10px] uppercase tracking-widest2 text-sand block mb-6">
+                  <span className="font-sans text-[10px] uppercase tracking-widest2 text-sandblock mb-6">
                     The Report
                   </span>
                   <p className="font-display text-xl md:text-2xl text-ivory leading-snug">
                     A single source of truth for equity, base pay, and total
-                    comp across every stage of growth.
+                    comp across every stage ofgrowth.
                   </p>
-                  <p className="mt-6 font-sans text-sm text-ivory/50 leading-relaxed">
+                  <p className="mt-6 font-sanstext-sm text-ivory/50 leading-relaxed">
                     Drawn from verified filings, live offer data, and board-level
-                    disclosures — refreshed at every market close.
+                    disclosures â€” refreshed at every market close.
                   </p>
                 </div>
 
@@ -103,10 +104,10 @@ export default function Home() {
             </div>
           </div>
 
-          {/* footer strip of the hero — thin data rail, editorial convention */}
+          {/* footer strip of the hero â€” thin data rail, editorial convention */}
           <div className="relative hidden md:flex border-t border-line px-12 py-5 items-center justify-between">
             <span className="font-sans text-[10px] uppercase tracking-widest2 text-ivory/40">
-              Base — Equity — Bonus — Benchmarked Quarterly
+              Base â€” Equity â€” Bonus â€” Benchmarked Quarterly
             </span>
             <span className="font-sans text-[10px] uppercase tracking-widest2 text-ivory/40">
               Scroll
@@ -118,7 +119,7 @@ export default function Home() {
         <section className="px-6 md:px-12 py-16 md:py-24 border-t border-line">
           <div className="mb-12">
             <span className="font-sans text-[11px] uppercase tracking-widest2 text-sand mb-4 block">
-              02 — Database
+              02 â€” Database
             </span>
             <h2 className="font-display text-4xl md:text-5xl text-ivory mb-2">Market Intelligence</h2>
             <p className="font-sans text-sm text-ivory/60 max-w-xl">
@@ -133,7 +134,7 @@ export default function Home() {
         <section className="px-6 md:px-12 py-16 md:py-24 border-t border-line bg-surface/30">
           <div className="mb-12">
             <span className="font-sans text-[11px] uppercase tracking-widest2 text-sand mb-4 block">
-              03 — Analysis
+              03 â€” Analysis
             </span>
             <h2 className="font-display text-4xl md:text-5xl text-ivory mb-2">Level Comparison Dossier</h2>
             <p className="font-sans text-sm text-ivory/60 max-w-xl">
@@ -141,6 +142,20 @@ export default function Home() {
             </p>
           </div>
           <ComparisonView />
+        </section>
+
+        {/* --- COMPANY AVERAGE COMPARISON --- */}
+        <section className="px-6 md:px-12 py-16 md:py-24 border-t border-line">
+          <div className="mb-12">
+            <span className="font-sans text-[11px] uppercase tracking-widest2 text-sand mb-4 block">
+              04 â€” Benchmarking
+            </span>
+            <h2 className="font-display text-4xl md:text-5xl text-ivory mb-2">Company Averages</h2>
+            <p className="font-sans text-sm text-ivory/60 max-w-xl">
+              Compare average compensation trends across two companies.
+            </p>
+          </div>
+          <CompanyCompare />
         </section>
 
       </motion.div>
