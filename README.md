@@ -5,6 +5,13 @@ A full-stack compensation benchmarking platform built to explore real-world sala
 Built as a personal learning project to go deep on full-stack architecture: JWT auth, relational schema design with Prisma, and a data-dense but editorial-feeling frontend.
 
 ---
+## Live Demo
+
+**Frontend:** https://compensation-intelligence-system-omega.vercel.app/
+
+**Backend:** https://compensation-intelligence-backend-2sjj.onrender.com
+
+---
 
 ## Features
 
